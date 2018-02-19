@@ -1,6 +1,26 @@
 Customer Service RestAPI Specification
 
-======================================
+######################################
+Models (JSON objects)
+######################################
+
+Customer
+{
+	id: integer,
+	name: string,
+	company: string,
+	address: string,
+	customerType: string,
+	phoneNumber: string,
+	emailAddress: string,
+	tags: string[],
+	parentCustomerId: int
+}
+
+
+######################################
+EndPoints
+######################################
 
 Reading Customer Records:
 
@@ -75,12 +95,13 @@ Reading Customer Records:
 ======================================
 
 Writing Customer Records:
-
+	
 	- Create NEW Record
 		endpoint: /customers
 		HTTP verb: Post
 		Good Response Good: 200
 		Response body: customer record that was created (JSON.  includes the populated id).
+		Note: when creating new records, do not pass an "id" on the customer JSON in the request body.
 		
 		example request:
 			URL: http://localhost:8080/customers
