@@ -72,6 +72,14 @@ public class InMemoryCustomerRepositoryTests {
 	}
 	
 	@Test
+	public void findCustomersByIdReturnsNullIfNoUserFound() {
+		repository.save(new Customer());
+		
+		Assert.assertNull(repository.find(123));
+		Assert.assertNull(repository.find(444));
+	}
+	
+	@Test
 	public void canUpdateCustomers() {
 		Customer newCustomerRequest = new Customer();
 		newCustomerRequest.setName("customer1");

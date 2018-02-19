@@ -38,7 +38,8 @@ public class InMemoryCustomerRepository implements ICustomerRepository {
 	}
 
 	public Customer find(int customerId) {
-		return clone(customerMap.get(customerId));
+		Customer found = customerMap.get(customerId);
+		return (found != null) ? clone(found) : null;
 	}
 	
 	public void resetDatabse() {
