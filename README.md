@@ -13,4 +13,8 @@ Customer service project for DAT interview.
 - executes the service on your local machine.
 - root url for the service will be: "http://localhost:8080"
 
-## Under the "docs" folder is where you will find the specifications for the rest api.
+## Under the "docs" folder you will find:
+- simple api "specificaion"
+- simple POSTMAN collection of the different endpoints.
+
+These are both very basic.  More of a "rough draft" right now.
