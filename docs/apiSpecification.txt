@@ -1,0 +1,197 @@
+Customer Service RestAPI Specification
+
+======================================
+
+Reading Customer Records:
+
+	- Read ALL Records	
+		endpoint: /customers
+		HTTP verb: Get
+		Good Response Good: 200
+		Response body: Array of all customer records (JSON).
+		
+		example request:
+			URL: http://localhost:8080/customers
+			
+		example response:
+			StatusCode: 200
+			Body: 
+				[
+					{
+						"id": 1,
+						"name": "customerName",
+						"company": "company",
+						"address": "where I live",
+						"customerType": "VIP",
+						"phoneNumber": "111-222-3333",
+						"emailAddress": "email@sample.com",
+						"tags": [
+							"tag1",
+							"tag2"
+						],
+						"parentCustomerId": 0
+					},
+					{
+						"id": 2,
+						"name": "John Doe",
+						"company": "My Company Inc",
+						"address": "different location",
+						"customerType": "normal",
+						"phoneNumber": "555-444-1234",
+						"emailAddress": "email2@other.com",
+						"tags": [],
+						"parentCustomerId": 0
+					}
+				]
+			
+	- Read SINGLE Record (by id)
+		endpoint: /customers/{customerId}
+			"{customerId}" is the id for the customer you are searching for.
+		HTTP verb: Get
+		Good Response Good: 200
+		Response body: single customer record (JSON).
+		
+		example request:
+			URL: http://localhost:8080/customers/123
+			
+		example response:
+			StatusCode: 200
+			Body: 
+				{
+					"id": 123,
+					"name": "customerName",
+					"company": "company",
+					"address": "where I live",
+					"customerType": "VIP",
+					"phoneNumber": "111-222-3333",
+					"emailAddress": "email@sample.com",
+					"tags": [
+						"tag1",
+						"tag2"
+					],
+					"parentCustomerId": 0
+				}
+			
+======================================
+
+Writing Customer Records:
+
+	- Create NEW Record
+		endpoint: /customers
+		HTTP verb: Post
+		Good Response Good: 200
+		Response body: customer record that was created (JSON.  includes the populated id).
+		
+		example request:
+			URL: http://localhost:8080/customers
+			Body:
+				{
+					"name": "customerName",
+					"company": "company",
+					"address": "where I live",
+					"customerType": "VIP",
+					"phoneNumber": "111-222-3333",
+					"emailAddress": "email@sample.com",
+					"tags": [
+						"tag1",
+						"tag2"
+					]
+				}
+			
+		example response:
+			StatusCode: 200
+			Body: 
+				{
+					"id": 123,
+					"name": "customerName",
+					"company": "company",
+					"address": "where I live",
+					"customerType": "VIP",
+					"phoneNumber": "111-222-3333",
+					"emailAddress": "email@sample.com",
+					"tags": [
+						"tag1",
+						"tag2"
+					],
+					"parentCustomerId": 0
+				}
+			
+	- Update Existing Record
+		endpoint: /customers/{customerId}
+			"{customerId}" is the id for the customer you are searching for.
+		HTTP verb: Put
+		Good Response Good: 200
+		Response body: single customer record (JSON, with updated values).
+		
+		NOTE: this request will replace ALL properties on the record. (will clear out properties not passed in request)
+		
+		example request:
+			URL: http://localhost:8080/customers/123
+			BODY:
+				{
+					"id": 123,
+					"name": "new Customer Name",
+					"company": "changed company",
+					"address": "new address",
+					"customerType": "VIP",
+					"phoneNumber": "111-222-3333",
+					"emailAddress": "differentEmail@sample.com",
+					"tags": [
+						"tag3",
+						"tag2"
+					],
+					"parentCustomerId": 0
+				}
+			
+		example response:
+			StatusCode: 200
+			Body: 
+				{
+					"id": 123,
+					"name": "new Customer Name",
+					"company": "changed company",
+					"address": "new address",
+					"customerType": "VIP",
+					"phoneNumber": "111-222-3333",
+					"emailAddress": "differentEmail@sample.com",
+					"tags": [
+						"tag3",
+						"tag2"
+					],
+					"parentCustomerId": 0
+				}
+
+======================================
+
+Deleting Customer Records:
+
+	- Delete SINGLE record by id
+		endpoint: /customers/{customerId}
+			"{customerId}" is the id for the customer you are searching for.
+		HTTP verb: Delete
+		Good Response Good: 200
+		Response body: no response body.
+		
+		example request:
+			URL: http://localhost:8080/customers/123
+			
+		example response:
+			StatusCode: 200
+
+======================================
+
+Merging Customer Records:
+
+	- Merge SINGLE record under parent customer.
+		endpoint: /customers/{parentCustomerId}/subAccounts/{subCustomerId}
+			"{parentCustomerId}" is the id for the customer that you want to keep as the primary customer record.
+			"{subCustomerId}" is the id for the customer that you want to merge into the primary customer record.
+		HTTP verb: Post
+		Good Response Good: 200
+		Response body: no response body.
+		
+		example request:
+			URL: http://localhost:8080/customers/123
+			
+		example response:
+			StatusCode: 200
