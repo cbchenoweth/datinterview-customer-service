@@ -39,6 +39,17 @@ public class CustomerControllerTests {
 	}
 	
 	@Test
+	public void canFindCustomersById() {
+		int customerId = 123;
+		Customer expectedCustomer = new Customer();
+		Mockito.when(customerRepository.find(customerId)).thenReturn(expectedCustomer);
+		
+		Customer customer = controller.findById(customerId);
+		
+		Assert.assertEquals(expectedCustomer, customer);
+	}
+	
+	@Test
 	public void canCreateNewCustomer() {
 		Customer newCustomerRequest = new Customer();
 		Customer expectedCreatedCustomer = new Customer();

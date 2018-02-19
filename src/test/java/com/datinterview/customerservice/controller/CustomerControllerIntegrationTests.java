@@ -21,6 +21,7 @@ import com.datinterview.customerservice.model.Customer;
 @SpringBootTest(classes = CustomerServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class CustomerControllerIntegrationTests {
 
+	private static final String CUSTOMER_URL_BASE = "http://localhost:8080/customers/";
 	TestRestTemplate restTemplate = new TestRestTemplate();
 
 	@Test
@@ -47,7 +48,8 @@ public class CustomerControllerIntegrationTests {
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 		JSONAssert.assertEquals(expectedCustomerJSONFromCreate, new JSONArray(response.getBody()).getJSONObject(0), false);
 		
-		// TODO - update record and check again!
+		
+		// update customer
 		customerRequest.setName("customer2");
 		response = updateCustomer(customerId, customerRequest);
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -56,14 +58,17 @@ public class CustomerControllerIntegrationTests {
 		expectedCustomerJSONFromUpdate.put("name", customerRequest.getName());
 		JSONAssert.assertEquals(expectedCustomerJSONFromUpdate, new JSONObject(response.getBody()), false);
 		
-		// read all customers - should have 1 (updated)
-		response = getAllCustomers();
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-		JSONAssert.assertEquals(expectedCustomerJSONFromUpdate, new JSONArray(response.getBody()).getJSONObject(0), false);
 		
-		// TODO - delete and then check again!
+		// find customer by id
+		response = findCustomer(customerId);
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		JSONAssert.assertEquals(expectedCustomerJSONFromUpdate, new JSONObject(response.getBody()), false);
+		
+		
+		// delete customer
 		response = deleteCustomer(customerId);
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		
 		
 		// read all customers - should have 0
 		response = getAllCustomers();
@@ -72,21 +77,29 @@ public class CustomerControllerIntegrationTests {
 	}
 
 	private ResponseEntity<String> deleteCustomer(int customerId) {
-		return restTemplate.exchange("http://localhost:8080/customers/" + customerId, HttpMethod.DELETE, new HttpEntity<String>(""), String.class);
+		return restTemplate.exchange(CUSTOMER_URL_BASE + customerId, HttpMethod.DELETE, new HttpEntity<String>(""), String.class);
 	}
 
 	private ResponseEntity<String> getAllCustomers() {
-		return restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, new HttpEntity<String>(""), String.class);
+		return sendGetRequest(CUSTOMER_URL_BASE);
+	}
+	
+	private ResponseEntity<String> findCustomer(int customerId) {
+		return sendGetRequest(CUSTOMER_URL_BASE + customerId);
+	}
+
+	private ResponseEntity<String> sendGetRequest(String url) {
+		return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(""), String.class);
 	}
 
 	private ResponseEntity<String> createCustomer(Customer newCustomerRequest) {
 		HttpEntity<Customer> entity = new HttpEntity<Customer>(newCustomerRequest);
-		return restTemplate.exchange("http://localhost:8080/customers", HttpMethod.POST, entity, String.class);
+		return restTemplate.exchange(CUSTOMER_URL_BASE, HttpMethod.POST, entity, String.class);
 	}
 	
 	private ResponseEntity<String> updateCustomer(int customerId, Customer updateCustomerRequest) {
 		HttpEntity<Customer> entity = new HttpEntity<Customer>(updateCustomerRequest);
-		return restTemplate.exchange("http://localhost:8080/customers/" + customerId, HttpMethod.PUT, entity, String.class);
+		return restTemplate.exchange(CUSTOMER_URL_BASE + customerId, HttpMethod.PUT, entity, String.class);
 	}
 
 }

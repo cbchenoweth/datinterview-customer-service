@@ -28,6 +28,11 @@ public class CustomerController {
 	public Collection<Customer> getAllCustomers() {
 		return customerRepository.findAll();
 	}
+	
+	@GetMapping("/customers/{customerId}")
+	public Customer findById(@PathVariable int customerId) {
+		return customerRepository.find(customerId);
+	}
 
 	@PostMapping("/customers")
 	public Customer createNewCustomer(@RequestBody Customer newCustomerRequest) {

@@ -11,5 +11,7 @@ public interface ICustomerRepository {
 	Customer save(Customer newCustomerRequest);
 
 	void delete(int customerId);
+	
+	Customer find(int customerId);
 
 }
