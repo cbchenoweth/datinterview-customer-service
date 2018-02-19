@@ -31,7 +31,7 @@ public class CustomerControllerTests {
 	@Test
 	public void canGetAllCustomers() {
 		List<Customer> expectedCustomers = Arrays.asList(new Customer(), new Customer());
-		Mockito.when(customerRepository.getAllCustomers()).thenReturn(expectedCustomers);
+		Mockito.when(customerRepository.findAll()).thenReturn(expectedCustomers);
 		
 		Collection<Customer> allCustomers = controller.getAllCustomers();
 		
@@ -42,7 +42,7 @@ public class CustomerControllerTests {
 	public void canCreateNewCustomer() {
 		Customer newCustomerRequest = new Customer();
 		Customer expectedCreatedCustomer = new Customer();
-		Mockito.when(customerRepository.createNewCustomer(newCustomerRequest)).thenReturn(expectedCreatedCustomer);
+		Mockito.when(customerRepository.save(newCustomerRequest)).thenReturn(expectedCreatedCustomer);
 		
 		Customer actualCreatedCustomer = controller.createNewCustomer(newCustomerRequest);
 		
@@ -55,7 +55,24 @@ public class CustomerControllerTests {
 		
 		controller.deleteCustomer(customerId);
 		
-		Mockito.verify(customerRepository).deleteCustomer(customerId);
+		Mockito.verify(customerRepository).delete(customerId);
+	}
+	
+	@Test
+	public void canUpdateCustomer() {
+		int customerId = 123;
+		Customer updateCustomerRequest = new Customer();
+		Customer expectedUpdatedCustomer = new Customer();
+		Mockito.when(customerRepository.save(updateCustomerRequest)).then(i -> {
+			Customer passedCustomer = i.getArgument(0);
+			Assert.assertEquals(customerId, passedCustomer.getId());
+			
+			return expectedUpdatedCustomer;
+		});
+		
+		Customer actualUpdatedCustomer = controller.updateCustomer(customerId, updateCustomerRequest);
+		
+		Assert.assertEquals(expectedUpdatedCustomer, actualUpdatedCustomer);
 	}
 	
 }

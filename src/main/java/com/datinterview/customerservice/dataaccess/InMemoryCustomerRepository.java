@@ -16,35 +16,46 @@ public class InMemoryCustomerRepository implements ICustomerRepository {
 	private static final AtomicInteger nextId = new AtomicInteger(1);
 	
 	@Override
-	public List<Customer> getAllCustomers() {
+	public List<Customer> findAll() {
 		return new ArrayList<>(customerMap.values());
 	}
 
 	@Override
-	public Customer createNewCustomer(Customer newCustomerRequest) {
-		Customer dbCustomer = new Customer();
-		dbCustomer.setId(nextId.getAndIncrement());
-		dbCustomer.setName(newCustomerRequest.getName());
-		dbCustomer.setCompany(newCustomerRequest.getCompany());
-		dbCustomer.setAddress(newCustomerRequest.getAddress());
-		dbCustomer.setCustomerType(newCustomerRequest.getCustomerType());
-		dbCustomer.setPhoneNumber(newCustomerRequest.getPhoneNumber());
-		dbCustomer.setEmailAddress(newCustomerRequest.getEmailAddress());
-		dbCustomer.setTags(new ArrayList<>(newCustomerRequest.getTags()));
+	public Customer save(Customer newCustomerRequest) {
+		Customer dbCustomer = clone(newCustomerRequest);
+		if(dbCustomer.getId() == 0) {
+			dbCustomer.setId(nextId.getAndIncrement());
+		}
 		
 		customerMap.put(dbCustomer.getId(), dbCustomer);
 		
-		return dbCustomer;
+		return clone(dbCustomer);
 	}
 
+	@Override
+	public void delete(int customerId) {
+		customerMap.remove(customerId);
+	}
+
+	public Customer find(int customerId) {
+		return clone(customerMap.get(customerId));
+	}
+	
 	public void resetDatabse() {
 		customerMap.clear();
 		nextId.set(1);
 	}
-
-	@Override
-	public void deleteCustomer(int customerId) {
-		customerMap.remove(customerId);
+	
+	private Customer clone(Customer customer) {
+		Customer clone = new Customer();
+		clone.setId(customer.getId());
+		clone.setName(customer.getName());
+		clone.setCompany(customer.getCompany());
+		clone.setAddress(customer.getAddress());
+		clone.setCustomerType(customer.getCustomerType());
+		clone.setPhoneNumber(customer.getPhoneNumber());
+		clone.setEmailAddress(customer.getEmailAddress());
+		clone.setTags(new ArrayList<>(customer.getTags()));
+		return clone;
 	}
-
 }

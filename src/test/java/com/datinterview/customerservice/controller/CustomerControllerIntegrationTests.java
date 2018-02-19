@@ -25,25 +25,41 @@ public class CustomerControllerIntegrationTests {
 
 	@Test
 	public void testCreateReadAndDeleteAValidCustomer() throws Exception {
-		Customer newCustomerRequest = new Customer();
-		newCustomerRequest.setName("customer1");
-		
-		JSONObject expectedCustomerJSON = new JSONObject();
-		expectedCustomerJSON.put("name", newCustomerRequest.getName());
-		
 		// create new customer
-		ResponseEntity<String> response = createCustomer(newCustomerRequest);
+		Customer customerRequest = new Customer();
+		customerRequest.setName("customer1");
+
+		ResponseEntity<String> response = createCustomer(customerRequest);
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		
 		JSONObject responseJSON = new JSONObject(response.getBody());
-		JSONAssert.assertEquals(expectedCustomerJSON, responseJSON, false);
+		
+		JSONObject expectedCustomerJSONFromCreate = new JSONObject();
+		expectedCustomerJSONFromCreate.put("name", customerRequest.getName());
+		
+		JSONAssert.assertEquals(expectedCustomerJSONFromCreate, responseJSON, false);
+		
 		int customerId = responseJSON.getInt("id");
+		
 		
 		// read all customers - should have 1
 		response = getAllCustomers();
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-		JSONAssert.assertEquals(expectedCustomerJSON, new JSONArray(response.getBody()).getJSONObject(0), false);
+		JSONAssert.assertEquals(expectedCustomerJSONFromCreate, new JSONArray(response.getBody()).getJSONObject(0), false);
 		
 		// TODO - update record and check again!
+		customerRequest.setName("customer2");
+		response = updateCustomer(customerId, customerRequest);
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		
+		JSONObject expectedCustomerJSONFromUpdate = new JSONObject();
+		expectedCustomerJSONFromUpdate.put("name", customerRequest.getName());
+		JSONAssert.assertEquals(expectedCustomerJSONFromUpdate, new JSONObject(response.getBody()), false);
+		
+		// read all customers - should have 1 (updated)
+		response = getAllCustomers();
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		JSONAssert.assertEquals(expectedCustomerJSONFromUpdate, new JSONArray(response.getBody()).getJSONObject(0), false);
 		
 		// TODO - delete and then check again!
 		response = deleteCustomer(customerId);
@@ -66,6 +82,11 @@ public class CustomerControllerIntegrationTests {
 	private ResponseEntity<String> createCustomer(Customer newCustomerRequest) {
 		HttpEntity<Customer> entity = new HttpEntity<Customer>(newCustomerRequest);
 		return restTemplate.exchange("http://localhost:8080/customers", HttpMethod.POST, entity, String.class);
+	}
+	
+	private ResponseEntity<String> updateCustomer(int customerId, Customer updateCustomerRequest) {
+		HttpEntity<Customer> entity = new HttpEntity<Customer>(updateCustomerRequest);
+		return restTemplate.exchange("http://localhost:8080/customers/" + customerId, HttpMethod.PUT, entity, String.class);
 	}
 
 }

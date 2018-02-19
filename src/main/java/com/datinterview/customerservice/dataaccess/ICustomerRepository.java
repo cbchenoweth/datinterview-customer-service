@@ -6,10 +6,10 @@ import com.datinterview.customerservice.model.Customer;
 
 public interface ICustomerRepository {
 
-	Collection<Customer> getAllCustomers();
+	Collection<Customer> findAll();
 
-	Customer createNewCustomer(Customer newCustomerRequest);
+	Customer save(Customer newCustomerRequest);
 
-	void deleteCustomer(int customerId);
+	void delete(int customerId);
 
 }
