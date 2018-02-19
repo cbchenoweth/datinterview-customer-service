@@ -12,6 +12,7 @@ public class Customer {
 	private String phoneNumber;
 	private String emailAddress;
 	private List<String> tags = new ArrayList<>();
+	private int parentCustomerId;
 	
 	public int getId() {
 		return id;
@@ -75,6 +76,14 @@ public class Customer {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	public int getParentCustomerId() {
+		return parentCustomerId;
+	}
+
+	public void setParentCustomerId(int parentCustomerId) {
+		this.parentCustomerId = parentCustomerId;
 	}
 
 }

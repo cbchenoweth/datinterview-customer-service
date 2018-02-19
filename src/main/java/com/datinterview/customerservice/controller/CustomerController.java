@@ -49,5 +49,16 @@ public class CustomerController {
 		updateCustomerRequest.setId(customerId);
 		return customerRepository.save(updateCustomerRequest);
 	}
+
+	@PostMapping("/customers/{primaryCustomerId}/subAccounts/{subCustomerId}")
+	public void mergeCustomers(@PathVariable int primaryCustomerId, @PathVariable int subCustomerId) {
+		Customer primaryCustomer = customerRepository.find(primaryCustomerId);
+		Customer subCustomer = customerRepository.find(subCustomerId);
+		
+		if(primaryCustomer != null && subCustomer != null) {
+			subCustomer.setParentCustomerId(primaryCustomerId);
+			customerRepository.save(subCustomer);
+		}
+	}
 	
 }

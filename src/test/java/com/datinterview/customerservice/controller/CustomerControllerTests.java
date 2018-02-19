@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -84,6 +85,51 @@ public class CustomerControllerTests {
 		Customer actualUpdatedCustomer = controller.updateCustomer(customerId, updateCustomerRequest);
 		
 		Assert.assertEquals(expectedUpdatedCustomer, actualUpdatedCustomer);
+	}
+	
+	@Test
+	public void canMergeCustomers() {
+		int primaryCustomerId = 123;
+		int subCustomerId = 234;
+		
+		Customer primaryCustomerRecord = new Customer();
+		Mockito.when(customerRepository.find(primaryCustomerId)).thenReturn(primaryCustomerRecord);
+		
+		Customer subCustomerRecord = new Customer();
+		Mockito.when(customerRepository.find(subCustomerId)).thenReturn(subCustomerRecord);
+		
+		Mockito.when(customerRepository.save(subCustomerRecord)).then(i -> {
+			Assert.assertEquals(primaryCustomerId, subCustomerRecord.getParentCustomerId());
+			return new Customer();
+		});
+		
+		controller.mergeCustomers(primaryCustomerId, subCustomerId);
+		
+		Mockito.verify(customerRepository).save(subCustomerRecord);
+	}
+	
+	@Test
+	public void mergeCustomersHandlesInvalidPrimaryAccountId() {
+		int primaryCustomerId = 123;
+		int subCustomerId = 234;
+		
+		Mockito.when(customerRepository.find(subCustomerId)).thenReturn(new Customer());
+		
+		controller.mergeCustomers(primaryCustomerId, subCustomerId);
+		
+		Mockito.verify(customerRepository, Mockito.never()).save(ArgumentMatchers.any());
+	}
+	
+	@Test
+	public void mergeCustomersHandlesInvalidSubAccountId() {
+		int primaryCustomerId = 123;
+		int subCustomerId = 234;
+		
+		Mockito.when(customerRepository.find(primaryCustomerId)).thenReturn(new Customer());
+		
+		controller.mergeCustomers(primaryCustomerId, subCustomerId);
+		
+		Mockito.verify(customerRepository, Mockito.never()).save(ArgumentMatchers.any());
 	}
 	
 }

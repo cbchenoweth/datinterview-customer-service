@@ -107,6 +107,7 @@ public class InMemoryCustomerRepositoryTests {
 		expectedStateInTheDatabase.setPhoneNumber("111-222-3333");
 		expectedStateInTheDatabase.setEmailAddress("email@example.com");
 		expectedStateInTheDatabase.setTags(new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3")));
+		expectedStateInTheDatabase.setParentCustomerId(123);
 		
 		
 		// save a new customer
@@ -118,6 +119,7 @@ public class InMemoryCustomerRepositoryTests {
 		customerToSave.setPhoneNumber(expectedStateInTheDatabase.getPhoneNumber());
 		customerToSave.setEmailAddress(expectedStateInTheDatabase.getEmailAddress());
 		customerToSave.setTags(new ArrayList<>(expectedStateInTheDatabase.getTags()));
+		customerToSave.setParentCustomerId(expectedStateInTheDatabase.getParentCustomerId());
 		
 		Customer customerReturnedFromSaveCall = repository.save(customerToSave);
 		
@@ -196,5 +198,6 @@ public class InMemoryCustomerRepositoryTests {
 		Assert.assertEquals(expected.getPhoneNumber(), actual.getPhoneNumber());
 		Assert.assertEquals(expected.getEmailAddress(), actual.getEmailAddress());
 		Assert.assertEquals(expected.getTags(), actual.getTags());
+		Assert.assertEquals(expected.getParentCustomerId(), actual.getParentCustomerId());
 	}
 }

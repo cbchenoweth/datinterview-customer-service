@@ -57,6 +57,7 @@ public class InMemoryCustomerRepository implements ICustomerRepository {
 		clone.setPhoneNumber(customer.getPhoneNumber());
 		clone.setEmailAddress(customer.getEmailAddress());
 		clone.setTags(new ArrayList<>(customer.getTags()));
+		clone.setParentCustomerId(customer.getParentCustomerId());
 		return clone;
 	}
 }
