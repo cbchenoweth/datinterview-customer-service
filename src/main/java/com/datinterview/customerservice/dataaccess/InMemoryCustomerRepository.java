@@ -42,4 +42,9 @@ public class InMemoryCustomerRepository implements ICustomerRepository {
 		nextId.set(1);
 	}
 
+	@Override
+	public void deleteCustomer(int customerId) {
+		customerMap.remove(customerId);
+	}
+
 }

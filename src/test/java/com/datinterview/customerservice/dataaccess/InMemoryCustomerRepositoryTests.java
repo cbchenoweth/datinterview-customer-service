@@ -100,6 +100,22 @@ public class InMemoryCustomerRepositoryTests {
 		
 		Assert.assertEquals(Arrays.asList(customer1, customer2), allCustomers);
 	}
+	
+	@Test
+	public void canDeleteCustomersFromTheRepository() {
+		Customer customer1 = repository.createNewCustomer(new Customer());
+		Customer customer2 = repository.createNewCustomer(new Customer());
+		Customer customer3 = repository.createNewCustomer(new Customer());
+		
+		repository.deleteCustomer(customer1.getId());
+		Assert.assertEquals(Arrays.asList(customer2, customer3), repository.getAllCustomers());
+		
+		repository.deleteCustomer(customer3.getId());
+		Assert.assertEquals(Arrays.asList(customer2), repository.getAllCustomers());
+		
+		repository.deleteCustomer(customer2.getId());
+		Assert.assertEquals(Arrays.asList(), repository.getAllCustomers());
+	}
 
 	private void assertCustomerProperties(Customer expected, Customer actual) {
 		Assert.assertEquals(expected.getName(), actual.getName());

@@ -34,26 +34,38 @@ public class CustomerControllerIntegrationTests {
 		// create new customer
 		ResponseEntity<String> response = createCustomer(newCustomerRequest);
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-		JSONAssert.assertEquals(expectedCustomerJSON, new JSONObject(response.getBody()), false);
+		JSONObject responseJSON = new JSONObject(response.getBody());
+		JSONAssert.assertEquals(expectedCustomerJSON, responseJSON, false);
+		int customerId = responseJSON.getInt("id");
 		
 		// read all customers - should have 1
 		response = getAllCustomers();
 		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
 		JSONAssert.assertEquals(expectedCustomerJSON, new JSONArray(response.getBody()).getJSONObject(0), false);
 		
+		// TODO - update record and check again!
+		
 		// TODO - delete and then check again!
+		response = deleteCustomer(customerId);
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		
+		// read all customers - should have 0
+		response = getAllCustomers();
+		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		Assert.assertEquals(0, new JSONArray(response.getBody()).length());
+	}
+
+	private ResponseEntity<String> deleteCustomer(int customerId) {
+		return restTemplate.exchange("http://localhost:8080/customers/" + customerId, HttpMethod.DELETE, new HttpEntity<String>(""), String.class);
 	}
 
 	private ResponseEntity<String> getAllCustomers() {
-		ResponseEntity<String> response;
-		response = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, new HttpEntity<String>(""), String.class);
-		return response;
+		return restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, new HttpEntity<String>(""), String.class);
 	}
 
 	private ResponseEntity<String> createCustomer(Customer newCustomerRequest) {
 		HttpEntity<Customer> entity = new HttpEntity<Customer>(newCustomerRequest);
-		ResponseEntity<String> response = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.POST, entity, String.class);
-		return response;
+		return restTemplate.exchange("http://localhost:8080/customers", HttpMethod.POST, entity, String.class);
 	}
 
 }

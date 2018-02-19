@@ -10,4 +10,6 @@ public interface ICustomerRepository {
 
 	Customer createNewCustomer(Customer newCustomerRequest);
 
+	void deleteCustomer(int customerId);
+
 }
